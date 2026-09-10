@@ -4,6 +4,8 @@
 
 Проект также известен в коде и релизах как **GramLead / X-Files Client (backfront)** — это одно и то же продуктовое ядро: `ScorifyRank` — публичное имя, `GramLead / X-Files` — историческое имя модулей, API и Docker-сервисов.
 
+https://www.litres.ru/74436604/
+
 ---
 
 ## 🎬 Видео о проекте
