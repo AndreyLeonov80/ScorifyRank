@@ -1,0 +1,14 @@
+.git
+.DS_Store
+node_modules/
+dist/
+build/
+*.map
+out/
+media/
+*.jsonl
+*.duckdb
+*.parquet
+state.json
+reports-todo/
+

@@ -1,0 +1,280 @@
+services:
+  x-files-client-db:
+    image: postgres:16-alpine
+    container_name: x-files-client-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gramlead
+      POSTGRES_PASSWORD: gramlead
+      POSTGRES_DB: gramlead
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - ./x-files-client-db/docker-data/client/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  x-files-rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: x-files-rabbitmq
+    hostname: x-files-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_NODENAME: rabbit@x-files-rabbitmq
+      RABBITMQ_DEFAULT_USER: gramlead
+      RABBITMQ_DEFAULT_PASS: gramlead
+    ports:
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - ./x-files-client-db/docker-data/client/rabbitmq:/var/lib/rabbitmq
+      - ./backfront/config/rabbitmq/consumer-timeout.conf:/etc/rabbitmq/conf.d/99-consumer-timeout.conf:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  x-files-redis:
+    image: redis:7-alpine
+    container_name: x-files-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - ./x-files-client-db/docker-data/client/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  x-files-backfront-new-back:
+    build:
+      context: ./backfront/backend
+    container_name: x-files-backfront-new-back
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+      x-files-rabbitmq:
+        condition: service_healthy
+      x-files-redis:
+        condition: service_healthy
+    environment:
+      WEB_PORT: "8009"
+      X_FILES_FRONTEND_ORIGIN: "http://127.0.0.1:8008"
+      TELEGRAM_SESSION: /data/tg-session/tg_export_session
+      PAYME_STATE_PATH: /data/state/state.json
+      PAYME_OUT_DIR: /data/out
+      PAYME_CACHE_DIR: /data/cache
+      PAYME_DUCKDB_DIR: /data/db/duckdb
+      PAYME_DUCKDB_PATH: /data/db/duckdb/gramlead.duckdb
+      PAYME_DUCKDB_READ_PATH: /data/db/duckdb/gramlead-read.duckdb
+      PAYME_PARQUET_DIR: /data/db/parquet
+      PAYME_LEGACY_CACHE_ARCHIVE_DIR: /data/db/legacy-cache-archive
+      PAYME_JUR_ENTITIES_DIR: /data/jur_entities
+      XFILES_POSTGRES_DSN: postgresql://gramlead:gramlead@x-files-client-db:5432/gramlead
+      DATABASE_URL: postgresql://gramlead:gramlead@x-files-client-db:5432/gramlead
+      XFILES_POSTGRES_CONNECT_TIMEOUT: "2"
+      RABBITMQ_URL: amqp://gramlead:gramlead@x-files-rabbitmq:5672//
+      REDIS_URL: redis://x-files-redis:6379/0
+      CELERY_BROKER_URL: amqp://gramlead:gramlead@x-files-rabbitmq:5672//
+      CELERY_RESULT_BACKEND: redis://x-files-redis:6379/1
+      CELERY_TASK_TIME_LIMIT: "0"
+      CELERY_TASK_SOFT_TIME_LIMIT: "0"
+      PAYME_STARTUP_DUCKDB_SYNC: "1"
+      PAYME_STARTUP_DUCKDB_AUTOREFRESH: "1"
+      PAYME_DUCKDB_SYNC_INTERVAL_SEC: "30"
+      LLM_PROVIDER: openrouter
+      LMSTUDIO_BASE_URL: http://host.docker.internal:1234/v1
+      UVICORN_WORKERS: "1"
+    ports:
+      - "127.0.0.1:8009:8009"
+    volumes:
+      - ./x-files-client-db/docker-data/client/state:/data/state
+      - ./x-files-client-db/docker-data/client/out:/data/out
+      - ./x-files-client-db/docker-data/client/cache:/data/cache
+      - ./x-files-client-db/docker-data/client/db:/data/db
+      - ./x-files-client-db/docker-data/client/jur_entities:/data/jur_entities
+      - ./x-files-client-db/docker-data/client/tg-session:/data/tg-session
+      - ./x-files-client-db/docker-data/client/license-runtime:/data/license
+      - ./x-files-client-db/docker-data/client/license-mirror-runtime:/data/license-mirror
+    restart: unless-stopped
+
+  celery_worker_telegram:
+    build:
+      context: ./backfront/backend
+    container_name: celery_worker_telegram
+    command: ["python", "-m", "celery", "-A", "app.celery_app:celery_app", "worker", "--loglevel=INFO", "-Q", "telegram.import,telegram.sync", "-n", "worker_telegram@%h"]
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+      x-files-rabbitmq:
+        condition: service_healthy
+      x-files-redis:
+        condition: service_healthy
+    environment: &backend-worker-env
+      WEB_PORT: "8009"
+      TELEGRAM_SESSION: /data/tg-session/tg_export_session
+      PAYME_STATE_PATH: /data/state/state.json
+      PAYME_OUT_DIR: /data/out
+      PAYME_CACHE_DIR: /data/cache
+      PAYME_DUCKDB_DIR: /data/db/duckdb
+      PAYME_DUCKDB_PATH: /data/db/duckdb/gramlead.duckdb
+      PAYME_DUCKDB_READ_PATH: /data/db/duckdb/gramlead-read.duckdb
+      PAYME_PARQUET_DIR: /data/db/parquet
+      PAYME_LEGACY_CACHE_ARCHIVE_DIR: /data/db/legacy-cache-archive
+      PAYME_JUR_ENTITIES_DIR: /data/jur_entities
+      XFILES_POSTGRES_DSN: postgresql://gramlead:gramlead@x-files-client-db:5432/gramlead
+      DATABASE_URL: postgresql://gramlead:gramlead@x-files-client-db:5432/gramlead
+      XFILES_POSTGRES_CONNECT_TIMEOUT: "2"
+      RABBITMQ_URL: amqp://gramlead:gramlead@x-files-rabbitmq:5672//
+      REDIS_URL: redis://x-files-redis:6379/0
+      CELERY_BROKER_URL: amqp://gramlead:gramlead@x-files-rabbitmq:5672//
+      CELERY_RESULT_BACKEND: redis://x-files-redis:6379/1
+      CELERY_TASK_TIME_LIMIT: "0"
+      CELERY_TASK_SOFT_TIME_LIMIT: "0"
+      LLM_PROVIDER: openrouter
+      LMSTUDIO_BASE_URL: http://host.docker.internal:1234/v1
+    volumes: &backend-worker-volumes
+      - ./x-files-client-db/docker-data/client/state:/data/state
+      - ./x-files-client-db/docker-data/client/out:/data/out
+      - ./x-files-client-db/docker-data/client/cache:/data/cache
+      - ./x-files-client-db/docker-data/client/db:/data/db
+      - ./x-files-client-db/docker-data/client/jur_entities:/data/jur_entities
+      - ./x-files-client-db/docker-data/client/tg-session:/data/tg-session
+      - ./x-files-client-db/docker-data/client/license-runtime:/data/license
+      - ./x-files-client-db/docker-data/client/license-mirror-runtime:/data/license-mirror
+    restart: unless-stopped
+
+  celery_worker_preprocess:
+    build:
+      context: ./backfront/backend
+    container_name: celery_worker_preprocess
+    command: ["python", "-m", "celery", "-A", "app.celery_app:celery_app", "worker", "--loglevel=INFO", "-Q", "jsonl.ingest,duckdb.preprocess,cache.warm,ocr.media", "-n", "worker_preprocess@%h"]
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+      x-files-rabbitmq:
+        condition: service_healthy
+      x-files-redis:
+        condition: service_healthy
+    environment: *backend-worker-env
+    volumes: *backend-worker-volumes
+    restart: unless-stopped
+
+  celery_worker_llm:
+    build:
+      context: ./backfront/backend
+    container_name: celery_worker_llm
+    command: ["python", "-m", "celery", "-A", "app.celery_app:celery_app", "worker", "--loglevel=INFO", "-Q", "llm.analysis", "-n", "worker_llm@%h"]
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+      x-files-rabbitmq:
+        condition: service_healthy
+      x-files-redis:
+        condition: service_healthy
+    environment: *backend-worker-env
+    volumes: *backend-worker-volumes
+    restart: unless-stopped
+
+  celery_worker_leads:
+    build:
+      context: ./backfront/backend
+    container_name: celery_worker_leads
+    command: ["python", "-m", "celery", "-A", "app.celery_app:celery_app", "worker", "--loglevel=INFO", "-Q", "lead.scoring,reply.suggest,digest.generate", "-n", "worker_leads@%h"]
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+      x-files-rabbitmq:
+        condition: service_healthy
+      x-files-redis:
+        condition: service_healthy
+    environment: *backend-worker-env
+    volumes: *backend-worker-volumes
+    restart: unless-stopped
+
+  celery_worker_export:
+    build:
+      context: ./backfront/backend
+    container_name: celery_worker_export
+    command: ["python", "-m", "celery", "-A", "app.celery_app:celery_app", "worker", "--loglevel=INFO", "-Q", "export.crm", "-n", "worker_export@%h"]
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+      x-files-rabbitmq:
+        condition: service_healthy
+      x-files-redis:
+        condition: service_healthy
+    environment: *backend-worker-env
+    volumes: *backend-worker-volumes
+    restart: unless-stopped
+
+  x-files-crm-bitrix24:
+    build:
+      context: ./backfront/backend
+    container_name: x-files-crm-bitrix24
+    command: ["python", "-m", "uvicorn", "app.crm_export_app:app", "--host", "0.0.0.0", "--port", "8024"]
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+    environment:
+      <<: *backend-worker-env
+      WEB_PORT: "8024"
+      CRM_EXPORT_PROVIDER: bitrix24
+      CRM_EXPORT_PUBLIC_BASE_URL: "http://127.0.0.1:8024"
+      X_FILES_FRONTEND_ORIGIN: "http://127.0.0.1:8024"
+    ports:
+      - "127.0.0.1:8024:8024"
+    volumes:
+      - ./x-files-client-db/docker-data/client/state:/data/state
+      - ./x-files-client-db/docker-data/client/out:/data/out
+      - ./x-files-client-db/docker-data/client/cache:/data/cache
+      - ./x-files-client-db/docker-data/client/db:/data/db
+      - ./x-files-client-db/docker-data/client/jur_entities:/data/jur_entities
+      - ./x-files-client-db/docker-data/client/tg-session:/data/tg-session
+      - ./x-files-client-db/docker-data/client/license-runtime:/data/license
+      - ./x-files-client-db/docker-data/client/license-mirror-runtime:/data/license-mirror
+      - ./config/crm_exports.local.yaml:/app/config/crm_exports.local.yaml:ro
+    restart: unless-stopped
+
+  x-files-crm-amocrm:
+    build:
+      context: ./backfront/backend
+    container_name: x-files-crm-amocrm
+    command: ["python", "-m", "uvicorn", "app.crm_export_app:app", "--host", "0.0.0.0", "--port", "8025"]
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+    environment:
+      <<: *backend-worker-env
+      WEB_PORT: "8025"
+      CRM_EXPORT_PROVIDER: amocrm
+      X_FILES_FRONTEND_ORIGIN: "http://127.0.0.1:8025"
+    ports:
+      - "127.0.0.1:8025:8025"
+    volumes:
+      - ./x-files-client-db/docker-data/client/state:/data/state
+      - ./x-files-client-db/docker-data/client/out:/data/out
+      - ./x-files-client-db/docker-data/client/cache:/data/cache
+      - ./x-files-client-db/docker-data/client/db:/data/db
+      - ./x-files-client-db/docker-data/client/jur_entities:/data/jur_entities
+      - ./x-files-client-db/docker-data/client/tg-session:/data/tg-session
+      - ./x-files-client-db/docker-data/client/license-runtime:/data/license
+      - ./x-files-client-db/docker-data/client/license-mirror-runtime:/data/license-mirror
+      - ./config/crm_exports.local.yaml:/app/config/crm_exports.local.yaml:ro
+    restart: unless-stopped
+
+  x-files-backfront-new-front:
+    build:
+      context: ./backfront/frontend
+    container_name: x-files-backfront-new-front
+    environment:
+      X_FILES_API_BASE: "http://x-files-backfront-new-back:8009"
+    ports:
+      - "127.0.0.1:8008:8008"
+    restart: unless-stopped

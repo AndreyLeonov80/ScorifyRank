@@ -1,0 +1,115 @@
+# syntax=docker/dockerfile:1.7
+ARG PYTHON_VERSION=3.11.9
+ARG NUITKA_VERSION=2.6.9
+ARG SOURCE_DATE_EPOCH=0
+
+FROM python:${PYTHON_VERSION}-slim AS nuitka-builder
+
+ARG NUITKA_VERSION
+ARG SOURCE_DATE_EPOCH
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=0 \
+    SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} \
+    CCACHE_DIR=/root/.cache/ccache \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_PROGRESS_BAR=off
+
+WORKDIR /src
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential ccache patchelf ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt /src/requirements.txt
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install -r /src/requirements.txt "nuitka==${NUITKA_VERSION}"
+
+COPY back.py security.py jur_entities_structure.py nuitka_entrypoint.py /src/
+COPY x_files_license /src/x_files_license
+COPY nuitka_shims/certifi /src/certifi
+
+RUN --mount=type=cache,target=/root/.cache/ccache \
+    python -m nuitka \
+    --standalone \
+    --follow-imports \
+    --low-memory \
+    --show-progress \
+    --jobs=1 \
+    --assume-yes-for-downloads \
+    --output-dir=/build/nuitka \
+    --output-filename=backfront-app \
+    --nofollow-import-to=psutil.tests \
+    --include-module=back \
+    --include-module=security \
+    --include-module=jur_entities_structure \
+    --include-package=x_files_license \
+    --include-package=fastapi \
+    --include-package=pydantic \
+    --include-package=uvicorn \
+    --include-package=telethon \
+    --include-package=duckdb \
+    --include-package=psycopg \
+    --include-package=requests \
+    --include-package=charset_normalizer \
+    --include-package=certifi \
+    --include-package=psutil \
+    nuitka_entrypoint.py
+
+FROM scratch AS frontend-assets
+
+COPY *.html /frontend/
+COPY app.manifest.json /frontend/
+COPY css /frontend/css
+COPY js /frontend/js
+COPY templates /frontend/templates
+COPY prompts /frontend/prompts
+
+FROM python:${PYTHON_VERSION}-slim AS runtime
+
+ARG BUILD_VERSION=dev
+ARG BUILD_COMMIT=unknown
+ARG BUILD_DATE=unknown
+ARG RELEASE_CHANNEL=dev
+ARG SOURCE_DATE_EPOCH=0
+
+LABEL org.opencontainers.image.title="x-files-client-backfront" \
+      org.opencontainers.image.description="X-Files client backend/frontend runtime compiled with Nuitka" \
+      org.opencontainers.image.version="${BUILD_VERSION}" \
+      org.opencontainers.image.revision="${BUILD_COMMIT}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      x-files.release.channel="${RELEASE_CHANNEL}" \
+      x-files.runtime="nuitka"
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=0 \
+    SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} \
+    PYTHONFAULTHANDLER=0 \
+    PYTHONWARNINGS=ignore \
+    PAYME_APP_DIR=/app \
+    WEB_PORT=8001 \
+    PAYME_STATE_PATH=/data/state/state.json \
+    TELEGRAM_SESSION=/data/state/tg_export_session \
+    PAYME_OUT_DIR=/data/out \
+    PAYME_CACHE_DIR=/data/cache \
+    PAYME_DUCKDB_DIR=/data/db/duckdb \
+    PAYME_DUCKDB_PATH=/data/db/duckdb/gramlead.duckdb \
+    PAYME_PARQUET_DIR=/data/db/parquet \
+    PAYME_JUR_ENTITIES_DIR=/data/jur_entities \
+    PAYME_OCR_SERVICE_URL=http://x-files-ocr:8010
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates libgomp1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /data/state /data/source /data/out /data/cache /data/db/duckdb /data/db/parquet /data/jur_entities
+
+COPY --from=nuitka-builder /build/nuitka/nuitka_entrypoint.dist/ /app/runtime/
+COPY --from=frontend-assets /frontend/ /app/
+
+EXPOSE 8001
+
+CMD ["/app/runtime/backfront-app"]

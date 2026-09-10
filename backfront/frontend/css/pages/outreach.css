@@ -1,0 +1,51 @@
+html, body { height:100%; margin:0; }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(14,165,233,.14), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,.10), transparent 28%),
+        linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+      color:#0f172a;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .page { min-height:100vh; padding:16px 20px 24px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    .title { font-size:30px; font-weight:800; letter-spacing:-.03em; }
+    .nav, .toolbar, .toolbar-group { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .toolbar { justify-content:space-between; margin-top:12px; }
+    .btn, .input, .select, .badge {
+      border:1px solid #dbe4f0; border-radius:12px; background:rgba(255,255,255,.92);
+      color:#0f172a; font:inherit; padding:10px 14px; text-decoration:none;
+    }
+    .btn { display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+    .input { min-width:280px; }
+    .select { min-width:140px; }
+    .badge { display:inline-flex; padding:5px 10px; border-radius:999px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
+    .badge-new { background:#dcfce7; color:#166534; border-color:#86efac; }
+    .panel {
+      margin-top:16px; border:1px solid rgba(148,163,184,.26); border-radius:18px;
+      background:rgba(255,255,255,.88); box-shadow:0 24px 70px rgba(15,23,42,.08); overflow:hidden;
+    }
+    .section-title { font-size:16px; font-weight:700; padding:16px 16px 0; }
+    .section-subtitle { padding:4px 16px 16px; color:#64748b; font-size:14px; line-height:1.5; }
+    .table-wrap { overflow:auto; max-height:calc(100vh - 280px); }
+    table { width:100%; border-collapse:collapse; min-width:1180px; }
+    th {
+      position:sticky; top:0; z-index:1; background:rgba(241,245,249,.96);
+      color:#475569; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.05em;
+      padding:13px 16px; text-align:left; border-bottom:1px solid #dbe4f0;
+    }
+    td { padding:14px 16px; border-bottom:1px solid #eef2f7; vertical-align:top; font-size:14px; }
+    tbody tr:hover { background:#f8fafc; }
+    .cell-text { white-space:pre-wrap; line-height:1.45; }
+    .value-cell { font-weight:800; color:#0f172a; }
+    .empty, .error-box { padding:24px 20px; color:#64748b; }
+    .error-box { margin-top:14px; border:1px solid #fecaca; border-radius:16px; background:#fef2f2; color:#991b1b; }
+    .footer {
+      display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+      padding:14px 16px; background:rgba(248,250,252,.92); border-top:1px solid #e2e8f0;
+    }
+    @media (max-width:900px) {
+      .page { padding:12px; }
+      .title { font-size:24px; }
+      .input, .select { min-width:0; width:100%; }
+    }

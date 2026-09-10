@@ -1,0 +1,224 @@
+{
+  "defaultPage": "index.html",
+  "pages": {
+    "calendar.html": {
+      "title": "X-Files · Календарь",
+      "rootId": "app",
+      "script": "js/react.calendar.js?v=20260521-vite-split",
+      "style": "css/pages/calendar.css",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/react.runtime.js"
+      ]
+    },
+    "contacts.html": {
+      "title": "X-Files · Контакты",
+      "rootId": "react-root",
+      "script": "js/react.contacts.js?v=20260521-vite-split",
+      "style": "css/pages/contacts.css",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/legacy.contacts.store.js?v=20260521-split",
+        "js/react.runtime.js"
+      ]
+    },
+    "crm.html": {
+      "title": "X-Files · CRM",
+      "rootId": "app",
+      "script": "js/react.crm.js?v=20260521-vite-split",
+      "style": "css/pages/crm.css",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/legacy.crm.store.js?v=20260521-split",
+        "js/react.runtime.js"
+      ]
+    },
+    "dashboard.html": {
+      "title": "X-Files · Dashboard",
+      "rootId": "app",
+      "script": "js/react.dashboard.js?v=20260523-active-sources-v2",
+      "style": "css/pages/dashboard.css?v=20260522-import-settings-tabs",
+      "dependencies": [
+        "js/react.dashboard.utils.js?v=20260521-dashboard-utils",
+        "js/react.dashboard.panels.js?v=20260521-dashboard-panels",
+        "js/realtime.client.js"
+      ]
+    },
+    "deals.html": {
+      "title": "X-Files · Сделки",
+      "rootId": "app",
+      "script": "js/react.deals.js?v=20260521-vite-split",
+      "style": "css/pages/deals.css",
+      "dependencies": [
+        "js/react.deals.utils.js?v=20260521-deals-utils",
+        "js/react.deals.pipeline.js?v=20260521-deals-pipeline",
+        "js/react.deals.forms.js?v=20260521-deals-forms",
+        "js/react.deals.modals.js?v=20260521-deals-modals",
+        "js/react.runtime.js"
+      ]
+    },
+    "events.html": {
+      "title": "X-Files · Мероприятия",
+      "rootId": "app",
+      "script": "js/react.events.js?v=20260521-vite-split",
+      "style": "css/pages/events.css",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/legacy.events.store.js?v=20260521-split",
+        "js/react.runtime.js"
+      ]
+    },
+    "grid.html": {
+      "title": "X-Files · Sync",
+      "rootId": "react-root",
+      "script": "js/react.grid.js?v=20260523-sync-limit-import-v1",
+      "style": "css/pages/grid.css?v=20260521-grid-table-top",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/legacy.grid.store.js?v=20260523-sync-limit-import-v1",
+        "js/react.runtime.js"
+      ]
+    },
+    "import.html": {
+      "title": "X-Files · Импорт из Telegram",
+      "rootId": "app",
+      "script": "js/react.import.js?v=20260524-import-progress-ts-plan",
+      "style": "css/pages/import.css?v=20260523-import-filter-active-v1",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260523-import-delete-selected-v1",
+        "js/legacy.import.store.js?v=20260523-import-delete-selected-v1",
+        "js/react.runtime.js"
+      ]
+    },
+    "index.html": {
+      "title": "X-Files · Чаты · LLM Ассистент",
+      "rootId": "react-root",
+      "script": "js/react.index.js?v=20260526-chat-compose-prompts",
+      "style": "css/pages/index.css?v=20260526-prompt-settings-layout-v2",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260522-users-toolbar-v2",
+        "js/react.index.utils.js?v=20260521-index-utils",
+        "js/react.index.components.js?v=20260526-no-chat-source-destructive-actions",
+        "js/react.index.detail.js?v=20260521-index-detail",
+        "js/react.index.history.js?v=20260526-prompt-settings-layout-v2",
+    "js/react.index.analysis.js?v=20260521-index-analysis",
+    "js/react.index.chat.js?v=20260526-chat-compose-prompts",
+    "js/legacy.lead.dom.js?v=20260521-dom-adapter",
+    "js/legacy.lead.store.js?v=20260526-chat-compose-prompts",
+        "js/react.runtime.js"
+      ]
+    },
+    "jur-entities.html": {
+      "title": "X-Files · ЮР.ЛИЦА.",
+      "rootId": "app",
+      "script": "js/react.jur-entities.js?v=20260521-vite-split",
+      "style": "css/pages/jur-entities.css",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/legacy.jur-entities.store.js?v=20260521-split",
+        "js/react.runtime.js"
+      ]
+    },
+    "logs.html": {
+      "title": "Backfront · Live Logs",
+      "rootId": "app",
+      "script": "js/react.logs.js?v=20260521-vite-split",
+      "style": "css/pages/logs.css",
+      "dependencies": [
+        "js/realtime.client.js"
+      ]
+    },
+    "media.html": {
+      "title": "X-Files · Media",
+      "rootId": "app",
+      "script": "js/react.media.js?v=20260522-no-bot-archive-v1",
+      "style": "css/pages/media.css",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/legacy.media.store.js?v=20260522-no-bot-archive-v1",
+        "js/react.runtime.js"
+      ]
+    },
+    "needs.html": {
+      "title": "X-Files · Потребности",
+      "rootId": "app",
+      "script": "js/react.needs.js?v=20260521-vite-split",
+      "style": "css/pages/needs.css",
+      "dependencies": []
+    },
+    "outreach.html": {
+      "title": "X-Files · enReach",
+      "rootId": "app",
+      "script": "js/react.outreach.js?v=20260521-vite-split",
+      "style": "css/pages/outreach.css",
+      "dependencies": [
+        "js/realtime.client.js",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/legacy.outreach.store.js?v=20260521-split",
+        "js/react.runtime.js"
+      ]
+    },
+    "routes.html": {
+      "title": "X-Files · Маршруты",
+      "rootId": "react-root",
+      "script": "js/react.routes.js?v=20260521-vite-split",
+      "style": "css/pages/routes.css",
+      "dependencies": [
+        "https://cdn.tailwindcss.com",
+        "js/outreach.shared.js?v=20260521-script-api-split",
+        "js/script.api.js?v=20260521-script-api-split",
+        "js/react.runtime.js"
+      ]
+    },
+    "settings.html": {
+      "title": "X-Files · Настройки",
+      "rootId": "app",
+      "script": "js/react.settings.js?v=20260523-sync-status-v1",
+      "style": "css/pages/settings.css?v=20260522-import-settings-tabs",
+      "dependencies": [
+        "js/react.settings.utils.js?v=20260521-settings-utils"
+      ]
+    },
+    "setup_wizard.html": {
+      "title": "X-Files · Первый запуск",
+      "rootId": "app",
+      "script": "js/react.setup_wizard.js?v=20260521-vite-split",
+      "style": "css/pages/setup_wizard.css",
+      "dependencies": []
+    },
+    "tariffs.html": {
+      "title": "X-Files · Тарифы",
+      "rootId": "app",
+      "script": "js/react.tariffs.js?v=20260522-no-bot-archive-v1",
+      "style": "css/pages/tariffs.css",
+      "dependencies": []
+    }
+  }
+}

@@ -1,0 +1,158 @@
+services:
+  x-files-client-db:
+    build:
+      context: .
+      dockerfile: Dockerfile.x-files-client-db
+    image: ${XFILES_DB_IMAGE:-x-files-client-db:latest}
+    container_name: ${XFILES_DB_CONTAINER_NAME:-x-files-client-db}
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gramlead}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gramlead}
+      POSTGRES_DB: ${POSTGRES_DB:-gramlead}
+    volumes:
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/postgres:/var/lib/postgresql/data
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/state:/data/state
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/out:/data/out
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/cache:/data/cache
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/db:/data/db
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/jur_entities:/data/jur_entities
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/tg-session:/data/tg-session
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/license-runtime:/data/license
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/license-mirror-runtime:/data/license-mirror
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  x-files-client-backfront:
+    build:
+      context: .
+    image: ${XFILES_BACKFRONT_IMAGE:-x-files-client-backfront:latest}
+    container_name: ${XFILES_BACKFRONT_CONTAINER_NAME:-x-files-client-backfront}
+    restart: unless-stopped
+    depends_on:
+      x-files-client-db:
+        condition: service_healthy
+    environment:
+      APP_LICENSE_SECRET: ${APP_LICENSE_SECRET:-change-me}
+      APP_INSTANCE_ID: ${APP_INSTANCE_ID:-x-files-client-docker}
+      XFILES_CLIENT_DELIVERY: ${XFILES_CLIENT_DELIVERY:-0}
+      XFILES_ROOT_SIGNING_SECRET: ${XFILES_ROOT_SIGNING_SECRET:-dev-root-signing-secret-change-me}
+      XFILES_LICENSE_SIGNING_SECRET: ${XFILES_LICENSE_SIGNING_SECRET:-dev-root-signing-secret-change-me}
+      APP_LICENSE_DIR: /data/license
+      APP_LICENSE_MIRROR_DIR: /data/license-mirror
+      TELEGRAM_SESSION: /data/tg-session/tg_export_session
+      WEB_PORT: "8001"
+      PAYME_STATE_PATH: /data/state/state.json
+      PAYME_OUT_DIR: /data/out
+      PAYME_CACHE_DIR: /data/cache
+      PAYME_DUCKDB_DIR: /data/db/duckdb
+      PAYME_DUCKDB_PATH: /data/db/duckdb/gramlead.duckdb
+      PAYME_DUCKDB_READ_PATH: /data/db/duckdb/gramlead-read.duckdb
+      PAYME_PARQUET_DIR: /data/db/parquet
+      PAYME_LEGACY_CACHE_ARCHIVE_DIR: /data/db/legacy-cache-archive
+      PAYME_JUR_ENTITIES_DIR: /data/jur_entities
+      XFILES_POSTGRES_DSN: postgresql://${POSTGRES_USER:-gramlead}:${POSTGRES_PASSWORD:-gramlead}@x-files-client-db:5432/${POSTGRES_DB:-gramlead}
+      XFILES_POSTGRES_CONNECT_TIMEOUT: ${XFILES_POSTGRES_CONNECT_TIMEOUT:-2}
+      PAYME_OCR_SERVICE_URL: ${PAYME_OCR_SERVICE_URL:-http://192.168.0.90}
+      PAYME_STARTUP_TELEGRAM_BOOTSTRAP: ${PAYME_STARTUP_TELEGRAM_BOOTSTRAP:-0}
+      PAYME_STARTUP_ANALYSIS_AUTOREFRESH: ${PAYME_STARTUP_ANALYSIS_AUTOREFRESH:-0}
+      PAYME_STARTUP_DUCKDB_SYNC: ${PAYME_STARTUP_DUCKDB_SYNC:-0}
+      PAYME_STARTUP_DUCKDB_AUTOREFRESH: ${PAYME_STARTUP_DUCKDB_AUTOREFRESH:-0}
+    ports:
+      - "${HOST_WEB_BIND:-127.0.0.1}:${HOST_WEB_PORT:-8001}:8001"
+    volumes:
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/state:/data/state
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/out:/data/out
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/cache:/data/cache
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/db:/data/db
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/jur_entities:/data/jur_entities
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/tg-session:/data/tg-session
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/license-runtime:/data/license
+      - ${XFILES_DATA_ROOT:-./docker-data/client}/license-mirror-runtime:/data/license-mirror
+
+  x-files-root:
+    profiles: ["root"]
+    build:
+      context: .
+      dockerfile: Dockerfile.x-files-root
+    image: ${XFILES_ROOT_IMAGE:-x-files-root:latest}
+    container_name: ${XFILES_ROOT_CONTAINER_NAME:-x-files-root}
+    environment:
+      XFILES_ROOT_DATA_DIR: /root-data
+      XFILES_ROOT_RELEASES_DIR: /root-data/releases
+      XFILES_ROOT_SIGNING_SECRET: ${XFILES_ROOT_SIGNING_SECRET:-dev-root-signing-secret-change-me}
+    volumes:
+      - ${XFILES_ROOT_DATA_ROOT:-./docker-data/root}:/root-data
+
+  x-files-root-postgres:
+    profiles: ["root-web"]
+    image: postgres:16-alpine
+    container_name: ${XFILES_ROOT_POSTGRES_CONTAINER_NAME:-x-files-root-postgres}
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${XFILES_ROOT_POSTGRES_USER:-xfiles_root}
+      POSTGRES_PASSWORD: ${XFILES_ROOT_POSTGRES_PASSWORD:-xfiles_root}
+      POSTGRES_DB: ${XFILES_ROOT_POSTGRES_DB:-xfiles_root}
+    volumes:
+      - ${XFILES_ROOT_POSTGRES_DATA_ROOT:-./docker-data/root-postgres}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - root-web-net
+
+  x-files-root-web:
+    profiles: ["root-web"]
+    build:
+      context: .
+      dockerfile: Dockerfile.x-files-root
+    image: ${XFILES_ROOT_IMAGE:-x-files-root:latest}
+    container_name: ${XFILES_ROOT_WEB_CONTAINER_NAME:-x-files-root-web}
+    restart: unless-stopped
+    entrypoint: ["python", "-m", "uvicorn", "x_files_root.web:app", "--host", "0.0.0.0", "--port", "8010"]
+    depends_on:
+      x-files-root-postgres:
+        condition: service_healthy
+    environment:
+      XFILES_ROOT_DATA_DIR: /root-data
+      XFILES_ROOT_RELEASES_DIR: /root-data/releases
+      XFILES_ROOT_SIGNING_SECRET: ${XFILES_ROOT_SIGNING_SECRET:-dev-root-signing-secret-change-me}
+      XFILES_ROOT_POSTGRES_DSN: postgresql://${XFILES_ROOT_POSTGRES_USER:-xfiles_root}:${XFILES_ROOT_POSTGRES_PASSWORD:-xfiles_root}@x-files-root-postgres:5432/${XFILES_ROOT_POSTGRES_DB:-xfiles_root}
+      XFILES_ROOT_DEFAULT_LICENSE_SERVER_URL: ${XFILES_ROOT_DEFAULT_LICENSE_SERVER_URL:-https://xfiles.codeboost.ru}
+      XFILES_ROOT_LICENSE_SERVER_ADMIN_URL: ${XFILES_ROOT_LICENSE_SERVER_ADMIN_URL:-https://xfiles.codeboost.ru}
+      XFILES_ROOT_LICENSE_SERVER_ADMIN_USER: ${XFILES_ROOT_LICENSE_SERVER_ADMIN_USER:-${XFILES_LICENSE_SERVER_ADMIN_USER:-xfiles-owner}}
+      XFILES_ROOT_LICENSE_SERVER_ADMIN_PASSWORD: ${XFILES_LICENSE_SERVER_ADMIN_PASSWORD:-}
+      XFILES_ROOT_DEFAULT_OCR_URL: ${XFILES_ROOT_DEFAULT_OCR_URL:-http://x-files-ocr:8010}
+    ports:
+      - "127.0.0.1:${XFILES_ROOT_WEB_PORT:-8010}:8010"
+    volumes:
+      - ${XFILES_ROOT_DATA_ROOT:-./docker-data/root}:/root-data
+    networks:
+      - root-web-net
+
+  x-files-license-server:
+    profiles: ["license-server"]
+    build:
+      context: .
+      dockerfile: Dockerfile.x-files-license-server
+    image: ${XFILES_LICENSE_SERVER_IMAGE:-x-files-license-server:latest}
+    container_name: ${XFILES_LICENSE_SERVER_CONTAINER_NAME:-x-files-license-server}
+    restart: unless-stopped
+    environment:
+      XFILES_LICENSE_SERVER_DATA_DIR: /license-server-data
+      XFILES_LICENSE_SERVER_PORT: "8015"
+    ports:
+      - "${XFILES_LICENSE_SERVER_PORT:-8015}:8015"
+    volumes:
+      - ${XFILES_LICENSE_SERVER_DATA_ROOT:-./docker-data/license-server}:/license-server-data
+
+networks:
+  default:
+    name: ${NETWORK_NAME:-x-files-client-net}
+  root-web-net:
+    name: ${XFILES_ROOT_NETWORK_NAME:-x-files-root-net}

@@ -1,0 +1,42 @@
+html, body { height:100%; margin:0; }
+    body { background: radial-gradient(circle at top left, rgba(14,165,233,.14), transparent 34%), radial-gradient(circle at bottom right, rgba(34,197,94,.10), transparent 28%), linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%); color:#0f172a; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .page { min-height:100vh; padding:16px 20px 24px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    .title { font-size:30px; font-weight:800; letter-spacing:-.03em; }
+    .nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .btn { border:1px solid #dbe4f0; border-radius:12px; background:rgba(255,255,255,.92); color:#0f172a; font:inherit; padding:10px 14px; text-decoration:none; }
+    .panel { margin-top:16px; border:1px solid rgba(148,163,184,.26); border-radius:18px; background:rgba(255,255,255,.88); box-shadow:0 24px 70px rgba(15,23,42,.08); overflow:hidden; }
+    .section-title { font-size:16px; font-weight:700; padding:16px 16px 0; }
+    .section-subtitle { padding:4px 16px 16px; color:#64748b; font-size:14px; line-height:1.5; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:16px; }
+    .panel-toolbar { margin:0; padding:0 16px 16px; justify-content:flex-start; }
+    .input { width:100%; border:1px solid #dbe4f0; border-radius:12px; background:rgba(255,255,255,.94); color:#0f172a; font:inherit; padding:10px 12px; }
+    .search-input { max-width:360px; }
+    .select-input { max-width:220px; }
+    .select-input.small { max-width:140px; }
+    .form-grid { display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap:12px; padding:16px; }
+    .form-grid .wide { grid-column:1 / -1; }
+    .label { display:block; color:#64748b; font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; }
+    .hint { padding:0 16px 16px; color:#64748b; font-size:13px; line-height:1.5; }
+    .table-scroll { width:100%; overflow:auto; border-top:1px solid #e5edf7; }
+    .data-table { width:100%; border-collapse:separate; border-spacing:0; min-width:1180px; }
+    .data-table th { background:#eef3f9; color:#475569; font-size:12px; letter-spacing:.06em; text-transform:uppercase; text-align:left; padding:12px 16px; border-bottom:1px solid #dbe4f0; }
+    .data-table td { vertical-align:top; padding:14px 16px; border-bottom:1px solid #e8eef6; font-size:14px; line-height:1.45; }
+    .data-table tr:hover td { background:rgba(239,246,255,.68); }
+    .wide-cell { min-width:360px; max-width:520px; }
+    .medium-cell { min-width:260px; max-width:360px; }
+    .muted { color:#64748b; font-size:12px; margin-top:4px; }
+    .warning-text { color:#b45309; }
+    .deal-hint { display:inline-flex; margin-top:6px; border-radius:999px; padding:3px 8px; background:#dcfce7; color:#15803d; font-size:11px; font-weight:800; text-transform:uppercase; }
+    .badge-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; max-width:220px; }
+    .badge { display:inline-flex; align-items:center; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; border-radius:999px; padding:3px 8px; font-size:11px; font-weight:800; }
+    .score-hot { border-color:#fecaca; background:#fef2f2; color:#b91c1c; }
+    .score-warm { border-color:#fde68a; background:#fffbeb; color:#92400e; }
+    .score-cold { border-color:#dbe4f0; background:#f8fafc; color:#475569; }
+    .score-pill { display:inline-flex; align-items:center; justify-content:center; min-width:42px; height:30px; border-radius:999px; background:#ecfdf5; border:1px solid #86efac; color:#166534; font-weight:900; }
+    .auto-draft-note { display:inline-flex; margin-left:8px; border:1px solid #bbf7d0; border-radius:999px; background:#dcfce7; color:#166534; padding:2px 8px; font-size:12px; font-weight:800; }
+    .footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; background:#f8fafc; border-top:1px solid #e5edf7; flex-wrap:wrap; }
+    .empty { margin:16px; border:1px dashed #cbd5e1; border-radius:16px; padding:18px; color:#64748b; background:#f8fafc; }
+    .error-box { margin:0 16px 16px; border:1px solid #fecaca; background:#fef2f2; color:#b91c1c; border-radius:14px; padding:12px 14px; }
+    .error-box:empty { display:none; }
+    @media (max-width: 760px) { .form-grid { grid-template-columns:1fr; } }

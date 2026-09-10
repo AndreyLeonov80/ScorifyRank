@@ -1,0 +1,15 @@
+# Keep Codex focused on the active optimized code.
+../gramlead-main-new-optimize-arxived-ext123/
+**/node_modules/
+**/.venv/
+**/venv/
+**/__pycache__/
+**/dist/
+**/build/
+**/out/
+**/media/
+**/*.jsonl
+**/*.duckdb
+**/*.parquet
+**/state.json
+

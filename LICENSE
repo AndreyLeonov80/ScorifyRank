@@ -1,0 +1,127 @@
+ScorifyRank Commercial License v1.0
+GramLead / X-Files Client (backfront)
+Copyright (c) 2026 ScorifyRank. All rights reserved.
+
+===============================================================================
+РУССКАЯ ВЕРСИЯ (основная)
+===============================================================================
+
+1. ПРЕДМЕТ ЛИЦЕНЗИИ
+
+1.1. Настоящая лицензия распространяется на программное обеспечение
+ScorifyRank («ПО»), включающее исходный код, объектный код, Docker-образы,
+ZIP-релизы, документацию, промпты, скрипты, конфигурации и сопутствующие
+материалы репозитория: backend (backfront/backend), frontend
+(backfront/frontend), инфраструктуру (docker-compose.yml), документы (docs/)
+и лицензионные сервисы.
+1.2. Исключительные права на ПО принадлежат правообладателю ScorifyRank
+(«Правообладатель»).
+
+2. ЗАПРЕТЫ (БЕЗ ПИСЬМЕННОГО РАЗРЕШЕНИЯ ЗАПРЕЩЕНО)
+
+Без предварительного письменного разрешения Правообладателя запрещены:
+(a) использование ПО полностью или частично, включая запуск в коммерческих,
+внутренних или производственных целях;
+(b) копирование, воспроизведение, публикация (включая GitHub forks, mirrors,
+публичные репозитории);
+(c) изменение, адаптация, перевод, рефакторинг, создание производных работ;
+(d) декомпиляция, дизассемблирование, обход лицензионных проверок, удаление
+или изменение уведомлений об авторских правах;
+(e) распространение, продажа, аренда, сублицензирование, передача третьим
+лицам, предоставление доступа как сервис (SaaS) или в составе других услуг;
+(f) использование invite-кодов, license-файлов (invite-license.json),
+подписей и механизмов активации в обход лицензионного сервера;
+(g) обучение моделей машинного обучения на коде и документации ПО.
+
+3. РАЗРЕШЁННОЕ ИСПОЛЬЗОВАНИЕ
+
+3.1. Просмотр кода в приватном порядке в целях оценки перед покупкой
+допускается без запуска в production и без передачи третьим лицам.
+3.2. Любое коммерческое, внутреннее или опытно-промышленное использование
+требует отдельной коммерческой лицензии (per-seat / per-company / OEM),
+приобретённой у Правообладателя. Поставка осуществляется подписанными
+Docker ZIP-релизами с invite-кодом активации.
+3.3. Срок действия универсальных релизов (например, 15 дней) исчисляется
+с момента активации invite-кода, один код — одна активация, если иное
+не указано в договоре.
+
+4. ИНТЕЛЛЕКТУАЛЬНАЯ СОБСТВЕННОСТЬ И КОНФИДЕНЦИАЛЬНОСТЬ
+
+4.1. ПО, его структура, алгоритмы скоринга, промпты и данные конфигурации
+являются коммерческой тайной Правообладателя.
+4.2. Лицензиат не вправе раскрывать исходный код и внутренние материалы
+третьим лицам.
+
+5. ОТСУТСТВИЕ ГАРАНТИЙ И ОГРАНИЧЕНИЕ ОТВЕТСТВЕННОСТИ
+
+5.1. ПО предоставляется «КАК ЕСТЬ» (AS IS), без гарантий любого рода.
+5.2. Правообладатель не несёт ответственности за прямые, косвенные,
+случайные или последующие убытки, возникшие вследствие использования
+или невозможности использования ПО.
+
+6. СРОК И РАСТОРЖЕНИЕ
+
+6.1. Нарушение любого условия настоящей лицензии автоматически прекращает
+все права лицензиата; все копии ПО подлежат удалению.
+6.2. Положения разделов 2, 4, 5 сохраняют силу после расторжения.
+
+7. ПРИМЕНИМОЕ ПРАВО И КОНТАКТЫ
+
+7.1. Вопросы лицензирования: лицензирование производится по письменному
+договору с Правообладателем. Для приобретения коммерческой лицензии
+обратитесь к владельцу репозитория / официальному дистрибьютору ScorifyRank.
+7.2. Размещение ПО на GitHub не означает предоставления лицензии на
+использование (код доступен только для ознакомления с условиями
+настоящего файла).
+
+===============================================================================
+ENGLISH VERSION (translation)
+===============================================================================
+
+SCORIFYRANK COMMERCIAL LICENSE v1.0 — ALL RIGHTS RESERVED.
+
+1. SCOPE. This license covers the ScorifyRank software (the "Software"),
+including source and object code, Docker images, ZIP releases, documentation,
+prompts, scripts, configurations and related materials: backend
+(backfront/backend), frontend (backfront/frontend), infrastructure
+(docker-compose.yml), docs (docs/) and license services.
+Exclusive rights are held by ScorifyRank (the "Rights Holder").
+
+2. PROHIBITIONS. Without prior written permission of the Rights Holder,
+you MUST NOT: (a) use the Software in whole or in part, including
+commercial, internal or production use; (b) copy, reproduce or publish it
+(including public forks/mirrors); (c) modify, adapt, translate or create
+derivative works; (d) decompile, disassemble, circumvent license checks,
+or remove copyright notices; (e) distribute, sell, rent, sublicense,
+transfer, or offer as SaaS; (f) bypass invite-codes, license files
+(invite-license.json), signatures or activation mechanisms; (g) use the
+code/docs to train machine-learning models.
+
+3. PERMITTED USE. Private viewing of the code for evaluation purposes only,
+without production use and without disclosure to third parties, is allowed.
+Any commercial, internal or pilot use requires a separate paid commercial
+license (per-seat / per-company / OEM) purchased from the Rights Holder.
+Delivery is made via signed Docker ZIP releases with an invite-code;
+term runs from activation, one code — one activation, unless agreed
+otherwise.
+
+4. IP AND CONFIDENTIALITY. The Software, its scoring algorithms, prompts
+and configurations are trade secrets of the Rights Holder and must not be
+disclosed.
+
+5. NO WARRANTY; LIMITATION OF LIABILITY. THE SOFTWARE IS PROVIDED "AS IS",
+WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL THE RIGHTS HOLDER BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES.
+
+6. TERM AND TERMINATION. Any breach automatically terminates all rights;
+all copies must be deleted. Sections 2, 4, 5 survive termination.
+
+7. GOVERNING TERMS. Hosting on GitHub does not grant any right of use;
+the code is visible for review under this file only. Commercial licensing
+is granted solely under a written agreement with the Rights Holder.
+
+===============================================================================
+© 2026 ScorifyRank (GramLead / X-Files). All rights reserved.
+Третьи-party компоненты (Python, FastAPI, Telethon, DuckDB, PostgreSQL,
+RabbitMQ, Redis, Celery, Vite, React и др.) используются под их собственными
+лицензиями с сохранением всех уведомлений их правообладателей.

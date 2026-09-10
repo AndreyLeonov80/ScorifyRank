@@ -1,0 +1,32 @@
+# GramLead CRM export settings example.
+#
+# Скопируйте этот файл в:
+#   config/crm_exports.local.yaml
+#
+# Локальный файл `crm_exports.local.yaml` добавлен в .gitignore,
+# потому что там могут быть webhook URL, access token и другие секреты.
+
+bitrix24:
+  portal_url: "https://company.bitrix24.ru"
+  auth_mode: "webhook"
+  webhook_url: "https://company.bitrix24.ru/rest/1/REAL_WEBHOOK_CODE/"
+  selected_entity: "lead"
+  dry_run_limit: 25
+  duckdb_read_path: "/data/db/duckdb/gramlead-read.duckdb"
+  openrouter_api_key: ""
+  openrouter_model: "openai/gpt-oss-120b:free"
+  openrouter_contact_limit: 10
+  openrouter_timeout_sec: 120
+  openrouter_prompt: "Оцени, может ли этот человек купить GramLead. Дай короткий вывод: вероятность покупки, почему, что написать первым сообщением, какие риски. Не выдумывай факты."
+
+amocrm:
+  subdomain: "company.amocrm.ru"
+  client_id: ""
+  client_secret: ""
+  redirect_uri: ""
+  access_token: ""
+  refresh_token: ""
+  selected_pipeline_id: ""
+  selected_status_id: ""
+  responsible_user_id: ""
+  dry_run_limit: 25

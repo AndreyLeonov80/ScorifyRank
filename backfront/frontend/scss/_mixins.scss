@@ -1,0 +1,9 @@
+@mixin scroll-panel {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@mixin stable-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 80px;
+}

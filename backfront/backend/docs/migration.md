@@ -1,0 +1,24 @@
+# Backend Migration Notes
+
+- Keep `back.py` executable until the split is complete.
+- Use `app.main:app` as the Docker, Nuitka and smoke-test import path; it imports `back.app`, then mounts extracted routers before legacy routes.
+- `back.py` is now a small compatibility loader. The remaining legacy runtime body lives in `app/legacy_runtime.py` until every private helper and legacy test contract is moved to domain modules.
+- New code should read runtime settings from `app/core/config.py`.
+- Lightweight health checks already live in `app/routers/health.py`.
+- Settings/setup/auth HTTP routes live in `app/routers/config.py` and call `app/services/config.py`.
+- License/tariff/update-status HTTP routes live in `app/routers/license.py` and call `app/services/license.py`.
+- Leads/chat HTTP routes live in `app/routers/leads.py` and call `app/services/leads.py`.
+- Chat analysis HTTP routes live in `app/routers/analysis.py` and call `app/services/analysis.py`.
+- Telegram source/channel/import-sync HTTP routes live in `app/routers/channels.py` and call `app/services/channels.py`.
+- Route-analysis HTTP routes live in `app/routers/routes.py` and call `app/services/routes.py`.
+- Runtime logs/status/metrics/DuckDB/dashboard monitoring HTTP routes live in `app/routers/monitoring.py` and call `app/services/monitoring.py`.
+- Events, CRM, outReach and Telegram contacts HTTP routes live in `app/routers/events.py`, `app/routers/crm.py`, `app/routers/outreach.py`, `app/routers/contacts.py`.
+- Jur-entity, media/images, search and X-Files deals/needs HTTP routes live in their matching `app/routers/*` modules.
+- Route-handler bodies for extracted routers are physically moved from `back.py` into `app/services/*`; `back.py.__getattr__` keeps compatibility for direct legacy imports during the transition.
+- Pydantic contracts used by extracted routers live in `app/schemas/models.py` and are re-exported by domain schema modules without importing `back`.
+- Repository access for extracted services is isolated behind `app/repositories/legacy.py`; this keeps DB/SQL-heavy legacy functions behind one boundary until they are split by table/domain.
+- The remaining compatibility names are intentionally broad for now: tests and old scripts still patch private helpers such as `_get_app_settings`, `_analysis_rows`, `_postgres_ensure_xfiles_schema`, `_utc_now`, X-Files deal helpers and Telegram runtime state via `back.*`.
+- Next split passes should move those helper clusters from `app/legacy_runtime.py` to focused modules, then replace the loader with a direct `from app.main import app` shell.
+- Move code by domain, not by random helper blocks.
+- After each module extraction, run smoke tests against the original endpoint path.
+- Do not change response shapes until frontend pages are migrated.
