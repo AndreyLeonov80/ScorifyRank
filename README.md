@@ -1,10 +1,10 @@
 # ScorifyRank — search, analyze and rank information from Telegram and the web into structured signals
 
+Выпустил книгу о проекте: https://www.litres.ru/74436604/
+
 > Высоконагруженная система скоринга Telegram: поиск, анализ и ранжирование информации из Telegram и веба в структурированные сигналы — лиды, сделки, need-сигналы, события, оценки контактов.
 
 Проект также известен в коде и релизах как **GramLead / X-Files Client (backfront)** — это одно и то же продуктовое ядро: `ScorifyRank` — публичное имя, `GramLead / X-Files` — историческое имя модулей, API и Docker-сервисов.
-
-https://www.litres.ru/74436604/
 
 ---
 
